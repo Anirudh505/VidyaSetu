@@ -42,6 +42,13 @@ export function AuthProvider({ children }) {
         if (err.message?.includes("not synced") || err.status === 401) {
           setNeedsOnboarding(true);
           setDbUser(null);
+        } else {
+          // A severe network or 500 error occurred.
+          // To prevent an infinite redirect loop between /dashboard and /login,
+          // sign the user out of Clerk locally so they land safely on /login.
+          console.error("Backend auth sync failed:", err);
+          signOut();
+          setDbUser(null);
         }
       })
       .finally(() => setLoading(false));
