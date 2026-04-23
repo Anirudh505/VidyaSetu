@@ -10,14 +10,24 @@ if (process.env.NODE_ENV !== "test") {
   app.use(clerkMiddleware());
 }
 
+const allowedOrigins = [
+  process.env.FRONTEND_URL,
+  "http://localhost:5173",
+  "http://localhost:5174",
+  "http://localhost:5175",
+].filter(Boolean);
+
+function corsOrigin(origin, callback) {
+  if (!origin) return callback(null, true);
+  if (allowedOrigins.length === 0 || allowedOrigins.includes(origin)) {
+    return callback(null, true);
+  }
+  return callback(new Error(`Origin ${origin} not allowed by CORS`));
+}
+
 app.use(
   cors({
-    origin: [
-      process.env.FRONTEND_URL || "http://localhost:5173",
-      "http://localhost:5173",
-      "http://localhost:5174",
-      "http://localhost:5175",
-    ],
+    origin: corsOrigin,
     credentials: true,
   })
 );

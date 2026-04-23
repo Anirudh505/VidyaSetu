@@ -4,6 +4,9 @@
   "scripts": {
     "start": "./start.sh"
   },
+  "engines": {
+    "node": ">=20.9.0"
+  },
   "dependencies": {
     "@clerk/backend": "^3.2.13",
     "@clerk/express": "^2.1.5",
