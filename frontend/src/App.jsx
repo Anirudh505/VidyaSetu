@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate, Link } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, Link, useNavigate } from "react-router-dom";
 import { ClerkProvider } from "@clerk/clerk-react";
 import { Toaster } from "sonner";
 import { AuthProvider, useAuth } from "./context/AuthContext";
@@ -55,29 +55,49 @@ function Navbar() {
   );
 }
 
+function AppRoutes() {
+  return (
+    <>
+      <Toaster richColors position="top-right" />
+      <Navbar />
+      <Routes>
+        <Route path="/" element={<Navigate to="/dashboard" />} />
+        <Route path="/login/*" element={<Login />} />
+        <Route path="/signup/*" element={<Signup />} />
+        <Route path="/onboarding" element={<Onboarding />} />
+        <Route path="/join/:token" element={<JoinBatch />} />
+        <Route
+          path="/dashboard"
+          element={
+            <PrivateRoute>
+              <Dashboard />
+            </PrivateRoute>
+          }
+        />
+      </Routes>
+    </>
+  );
+}
+
 function App() {
   return (
-    <ClerkProvider publishableKey={PUBLISHABLE_KEY} afterSignOutUrl="/login">
+    <BrowserRouter>
+      <ClerkApp />
+    </BrowserRouter>
+  );
+}
+
+function ClerkApp() {
+  const navigate = useNavigate();
+
+  return (
+    <ClerkProvider
+      publishableKey={PUBLISHABLE_KEY}
+      afterSignOutUrl="/login"
+      navigate={(to) => navigate(to)}
+    >
       <AuthProvider>
-        <BrowserRouter>
-          <Toaster richColors position="top-right" />
-          <Navbar />
-          <Routes>
-            <Route path="/" element={<Navigate to="/dashboard" />} />
-            <Route path="/login/*" element={<Login />} />
-            <Route path="/signup/*" element={<Signup />} />
-            <Route path="/onboarding" element={<Onboarding />} />
-            <Route path="/join/:token" element={<JoinBatch />} />
-            <Route
-              path="/dashboard"
-              element={
-                <PrivateRoute>
-                  <Dashboard />
-                </PrivateRoute>
-              }
-            />
-          </Routes>
-        </BrowserRouter>
+        <AppRoutes />
       </AuthProvider>
     </ClerkProvider>
   );

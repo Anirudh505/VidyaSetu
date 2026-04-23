@@ -12,6 +12,7 @@ export default function Login() {
           routing="path"
           path="/login"
           forceRedirectUrl={redirect || undefined}
+          afterSignInUrl="/dashboard"
           fallbackRedirectUrl="/dashboard"
           signUpUrl="/signup"
         />

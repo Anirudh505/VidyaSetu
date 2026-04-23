@@ -17,17 +17,25 @@ const allowedOrigins = [
   "http://localhost:5175",
 ].filter(Boolean);
 
-function corsOrigin(origin, callback) {
-  if (!origin) return callback(null, true);
-  if (allowedOrigins.length === 0 || allowedOrigins.includes(origin)) {
-    return callback(null, true);
+function isAllowedOrigin(origin) {
+  if (!origin) return true;
+  if (allowedOrigins.includes(origin)) return true;
+
+  try {
+    const host = new URL(origin).hostname;
+    if (host.endsWith(".vercel.app") || host.endsWith(".railway.app")) {
+      return true;
+    }
+  } catch (err) {
+    return false;
   }
-  return callback(new Error(`Origin ${origin} not allowed by CORS`));
+
+  return false;
 }
 
 app.use(
   cors({
-    origin: corsOrigin,
+    origin: isAllowedOrigin,
     credentials: true,
   })
 );

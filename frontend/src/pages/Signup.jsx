@@ -6,6 +6,7 @@ export default function Signup() {
       <SignUp
         routing="path"
         path="/signup"
+        afterSignUpUrl="/onboarding"
         fallbackRedirectUrl="/onboarding"
         signInUrl="/login"
       />
