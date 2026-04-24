@@ -17,9 +17,9 @@ const allowedOrigins = [
   "http://localhost:5175",
 ].filter(Boolean);
 
-function isAllowedOrigin(origin) {
-  if (!origin) return true;
-  if (allowedOrigins.includes(origin)) return true;
+function isAllowedOrigin(origin, callback) {
+  if (!origin) return callback(null, true);
+  if (allowedOrigins.includes(origin)) return callback(null, true);
 
   try {
     const host = new URL(origin).hostname;
@@ -29,13 +29,13 @@ function isAllowedOrigin(origin) {
       host === "localhost" ||
       host === "127.0.0.1"
     ) {
-      return true;
+      return callback(null, true);
     }
   } catch (err) {
-    return false;
+    return callback(null, false);
   }
 
-  return false;
+  return callback(null, false);
 }
 
 app.use(
