@@ -2,7 +2,8 @@
   "name": "vidyasetu",
   "version": "1.0.0",
   "scripts": {
-    "start": "./start.sh"
+    "postinstall": "cd backend && npm install",
+    "start": "cd backend && npm start"
   },
   "engines": {
     "node": ">=20.9.0"
