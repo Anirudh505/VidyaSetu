@@ -18,8 +18,20 @@ if (!PUBLISHABLE_KEY) {
 }
 
 function PrivateRoute({ children }) {
-  const { user, loading, needsOnboarding } = useAuth();
+  const { user, loading, needsOnboarding, authError, logout } = useAuth();
   if (loading) return <PageLoader />;
+  if (authError) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4 px-4 text-center">
+        <h2 className="text-xl font-semibold text-red-600">Connection Error</h2>
+        <p className="text-muted-foreground max-w-sm">Failed to connect to the server. Please check your connection and try again.</p>
+        <div className="flex gap-4">
+          <Button onClick={() => window.location.reload()}>Retry</Button>
+          <Button variant="outline" onClick={logout}>Sign out</Button>
+        </div>
+      </div>
+    );
+  }
   if (needsOnboarding) return <Navigate to="/onboarding" />;
   if (user && user.approval_status !== "approved") return <Navigate to="/onboarding" />;
   return user ? children : <Navigate to="/login" />;

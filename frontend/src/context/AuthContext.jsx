@@ -13,6 +13,7 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
   // needsOnboarding = Clerk sign-up done but role not yet synced to our DB
   const [needsOnboarding, setNeedsOnboarding] = useState(false);
+  const [authError, setAuthError] = useState(false);
 
   // Wire api.js to use Clerk's getToken so every request includes the right Bearer JWT
   useEffect(() => {
@@ -26,11 +27,13 @@ export function AuthProvider({ children }) {
     if (!isSignedIn) {
       setDbUser(null);
       setNeedsOnboarding(false);
+      setAuthError(false);
       setLoading(false);
       return;
     }
 
     setLoading(true);
+    setAuthError(false);
     api
       .me()
       .then((u) => {
@@ -44,10 +47,9 @@ export function AuthProvider({ children }) {
           setDbUser(null);
         } else {
           // A severe network or 500 error occurred.
-          // To prevent an infinite redirect loop between /dashboard and /login,
-          // sign the user out of Clerk locally so they land safely on /login.
+          // Show an error state instead of logging the user out to prevent an infinite redirect loop.
           console.error("Backend auth sync failed:", err);
-          signOut();
+          setAuthError(true);
           setDbUser(null);
         }
       })
@@ -69,11 +71,12 @@ export function AuthProvider({ children }) {
     await signOut();
     setDbUser(null);
     setNeedsOnboarding(false);
+    setAuthError(false);
   }
 
   return (
     <AuthContext.Provider
-      value={{ user: dbUser, loading, needsOnboarding, syncUser, logout }}
+      value={{ user: dbUser, loading, needsOnboarding, authError, syncUser, logout }}
     >
       {children}
     </AuthContext.Provider>
