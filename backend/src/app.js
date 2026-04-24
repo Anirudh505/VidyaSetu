@@ -23,7 +23,12 @@ function isAllowedOrigin(origin) {
 
   try {
     const host = new URL(origin).hostname;
-    if (host.endsWith(".vercel.app") || host.endsWith(".railway.app")) {
+    if (
+      host.endsWith(".vercel.app") ||
+      host.endsWith(".railway.app") ||
+      host === "localhost" ||
+      host === "127.0.0.1"
+    ) {
       return true;
     }
   } catch (err) {
